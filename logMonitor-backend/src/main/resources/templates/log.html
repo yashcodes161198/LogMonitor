@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Log File Updates</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+</head>
+<body>
+<h2>Log File Updates</h2>
+<div id="log-container" style="height: 300px; overflow-y: scroll; border: 1px solid black;">
+</div>
+
+<script>
+    var logContainer = document.getElementById("log-container");
+
+    var socket = new SockJS('/log-updates');
+    var stompClient = Stomp.over(socket);
+
+    stompClient.connect({}, function (frame) {
+        stompClient.subscribe('/topic/log', function (message) {
+            var logEntry = document.createElement("div");
+            logEntry.textContent = message.body;
+            logContainer.appendChild(logEntry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        });
+    });
+</script>
+</body>
+</html>

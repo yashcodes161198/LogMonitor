@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Log Monitor</title>
+</head>
+<body>
+<h1>Log Monitor</h1>
+<pre id="log"></pre>
+
+<script>
+    const logElement = document.getElementById('log');
+    const ws = new WebSocket('ws://localhost:8080/log');
+
+    ws.onmessage = function (event) {
+        logElement.textContent += event.data;
+    };
+
+    ws.onopen = function () {
+        console.log('WebSocket connection established');
+    };
+
+    ws.onclose = function () {
+        console.log('WebSocket connection closed');
+    };
+</script>
+</body>
+</html>

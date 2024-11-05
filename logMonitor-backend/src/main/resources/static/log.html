@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log File Updates</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <style>
+        #log-container {
+            height: 300px;
+            overflow-y: scroll;
+            border: 1px solid black;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+<h2>Log File Updates</h2>
+<div id="log-container"></div>
+
+<script>
+    const logContainer = document.getElementById('log-container');
+
+    // Establish WebSocket connection using SockJS and STOMP
+    const socket = new SockJS('/log-updates');
+    const stompClient = Stomp.over(socket);
+
+    stompClient.connect({}, function (frame) {
+        console.log('Connected: ' + frame);
+        stompClient.subscribe('/topic/log', function (message) {
+            const logEntry = document.createElement('div');
+            logEntry.textContent = message.body;
+            logContainer.appendChild(logEntry);
+            logContainer.scrollTop = logContainer.scrollHeight; // Auto-scroll to the latest log entry
+        });
+    });
+</script>
+</body>
+</html>
